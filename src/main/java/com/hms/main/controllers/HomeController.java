@@ -11,7 +11,7 @@ public class HomeController {
 	public ModelAndView home() {
 		System.out.println("Called home..");
 		ModelAndView mv = new ModelAndView();
-		mv.setViewName("Home.jsp");
+		mv.setViewName("Home");
 		return mv;
 	}
 	

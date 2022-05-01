@@ -1,3 +1,5 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,6 +15,13 @@
 			</label>
 		</div>
 		<br></br>
+		<div class="docContainer">
+			<span>
+				<c:forEach items="${Errors}" var = "error">
+					<p> Error: "${error}" </p> <br></br>
+				</c:forEach>
+			</span>
+		</div>
 		<div class="container">
 			<label>FIRST NAME</label>
 			<input name="firstname" type="text" />
@@ -24,8 +33,18 @@
 		</div>
 		<br></br>
 		<div class="container">
+			<label>AGE</label>
+			<input name="age" type="number" />
+		</div>
+		<br></br>
+		<div class="container">
 			<label>SSN</label>
 			<input name="ssn" type="number" />
+		</div>
+		<br></br>
+		<div class="container">
+			<label>INSURANCE POLICY #</label>
+			<input name="insurance" type="number" />
 		</div>
 		<br></br>
 		<div class="container">
@@ -51,6 +70,11 @@
 		<div class="container">
 			<label>CITY</label>
 			<input name="city" type="text" />
+		</div>
+		<br></br>
+		<div class="container">
+			<label>ZIP CODE	</label>
+			<input name="zip" type="number" />
 		</div>
 		<br></br>
 		<div class="container">

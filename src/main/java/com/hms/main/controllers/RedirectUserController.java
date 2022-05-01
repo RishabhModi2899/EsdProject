@@ -14,15 +14,15 @@ public class RedirectUserController {
 		ModelAndView mv = new ModelAndView();
 		if(assc.equals("patient")) {
 			if(action.equals("login")) {
-				mv.setViewName("LoginPatient.jsp");
+				mv.setViewName("LoginPatient");
 			} else {
-				mv.setViewName("PatientSignup.jsp");
+				mv.setViewName("PatientSignup");
 			}
 		} else {
 			if(action.equals("login")) {
-				mv.setViewName("LoginDoctor.jsp");
+				mv.setViewName("LoginDoctor");
 			} else {
-				mv.setViewName("DoctorSignup.jsp");
+				mv.setViewName("DoctorSignup");
 			}
 		}
 		return mv;

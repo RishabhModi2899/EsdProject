@@ -4,10 +4,9 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Doctor registration successful</title>
+<title>Patient Login Success</title>
 </head>
 <body>
-	Registration was successful
-	<a href="loginDoctorRedirect"> Doctor Log In </a>
+	Patient logged in successfully!
 </body>
 </html>

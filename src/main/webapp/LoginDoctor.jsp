@@ -1,3 +1,4 @@
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
@@ -8,7 +9,7 @@
 <title>Doctor Log In</title>
 </head>
 <body>
-	<form method="post" id="doctorLoginForm">
+	<form:form action="/loginDoctor" method="post" id="doctorLoginForm" modelattribute="doctormodel">
 		<div class="containerDoc">
 			<label>
 				DOCTOR LOGIN
@@ -28,6 +29,6 @@
 		<div class="containerDoc">
 			<input type="submit" value="LOGIN"/>
 		</div>
-	</form>
+	</form:form>
 </body>
 </html>
