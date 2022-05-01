@@ -8,7 +8,7 @@
 <title>Patient Login Page</title>
 </head>
 <body>
-	<form method="post" id="patientLoginForm">
+	<form action="loginPatient" method="post" id="patientLoginForm">
 		<div class="wrapper">
 			<label>
 				PATIENT LOGIN
