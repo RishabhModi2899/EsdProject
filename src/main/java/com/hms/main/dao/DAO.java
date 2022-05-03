@@ -11,7 +11,8 @@ import org.hibernate.cfg.Configuration;
 public class DAO {
 
 	private static final Logger log = Logger.getAnonymousLogger();
-
+	
+	int countThread = 0;
 	private static final ThreadLocal<Session> sessionThread = new ThreadLocal<Session>();
 	private static final SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
 
@@ -30,7 +31,10 @@ public class DAO {
 	}
 
 	protected void begin() {
+		
+		countThread++;
 		getSession().beginTransaction();
+		System.out.println(countThread);
 	}
 
 	protected void commit() {

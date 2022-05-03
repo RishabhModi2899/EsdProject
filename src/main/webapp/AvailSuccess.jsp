@@ -8,5 +8,6 @@
 </head>
 <body>
 	Availability has been added!! 
+	<a href="/">Back to welcome page</a>
 </body>
 </html>
