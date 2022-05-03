@@ -15,89 +15,103 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
+import com.hms.main.components.Appointments;
+import com.hms.main.components.DoctorAvailModel;
+import com.hms.main.components.DoctorModel;
 import com.hms.main.components.PatientModel;
 import com.hms.main.components.Validation;
+import com.hms.main.dao.AppointmentsDAO;
+import com.hms.main.dao.DoctorAvailDAO;
+import com.hms.main.dao.DoctorDAO;
 import com.hms.main.dao.PatientDAO;
+
+import net.bytebuddy.asm.Advice.Exit;
 
 @Controller
 public class PatientController {
-	
+
 	@Autowired
 	private PatientDAO patientDAO;
-	
+
+	@Autowired
+	private DoctorAvailDAO availDAO;
+
+	@Autowired
+	private AppointmentsDAO appDAO;
+
+	@Autowired
+	private DoctorDAO docDAO;
+
+	List<DoctorAvailModel> availDoctors;
+
+	PatientModel obj;
+
 	@PostMapping("/registerPatient")
 	public String validate(@Valid @ModelAttribute("PatientModel") PatientModel user,
-			@RequestParam("firstname") String firstName,
-			@RequestParam("lastname") String lastName,
-			@RequestParam("ssn") String ssn,
-			@RequestParam("insurance") String insurance,
-			@RequestParam("age") String age,
-			@RequestParam("username") String username,
-			@RequestParam("password") String password,
-			@RequestParam("address1") String add_line_1,
-			@RequestParam("address2") String add_line_2,
-			@RequestParam("city") String city,
-			@RequestParam("state") String state,
-			@RequestParam("zip") String zip,
+			@RequestParam("firstname") String firstName, @RequestParam("lastname") String lastName,
+			@RequestParam("ssn") String ssn, @RequestParam("insurance") String insurance,
+			@RequestParam("age") String age, @RequestParam("username") String username,
+			@RequestParam("password") String password, @RequestParam("address1") String add_line_1,
+			@RequestParam("address2") String add_line_2, @RequestParam("city") String city,
+			@RequestParam("state") String state, @RequestParam("zip") String zip,
 			@RequestParam("country") String country, ModelMap model) {
-		
+
 		Validation v = new Validation();
-		
+
 		List<String> errors = new ArrayList<>();
-		
-		if(v.isNull(firstName)) {
+
+		if (v.isNull(firstName)) {
 			String message = "First Name can't be empty";
 			errors.add(message);
-		} 
-		if(v.isNull(lastName)) {
+		}
+		if (v.isNull(lastName)) {
 			String message = "Last Name can't be empty";
 			errors.add(message);
 		}
-		if(v.isNull(ssn) || !v.validateSSN(ssn)) {
+		if (v.isNull(ssn) || !v.validateSSN(ssn)) {
 			String message = "Please enter a valid SSN";
 			errors.add(message);
 		}
-		if(v.isNull(insurance)) {
+		if (v.isNull(insurance)) {
 			String message = "Please enter your department";
 			errors.add(message);
 		}
-		if(v.isNull(age)) {
+		if (v.isNull(age)) {
 			String message = "Please enter your age";
 			errors.add(message);
 		}
-		if(v.isNull(password)) {
+		if (v.isNull(password)) {
 			String message = "Please enter your password";
 			errors.add(message);
 		}
-		if(v.isNull(add_line_1)) {
+		if (v.isNull(add_line_1)) {
 			String message = "Please enter your address";
 			errors.add(message);
 		}
-		if(v.isNull(city)) {
+		if (v.isNull(city)) {
 			String message = "Please enter your city";
 			errors.add(message);
 		}
-		if(v.isNull(state)) {
+		if (v.isNull(state)) {
 			String message = "Please enter your state";
 			errors.add(message);
 		}
-		if(v.isNull(zip) || !v.validateZipCode(zip)) {
+		if (v.isNull(zip) || !v.validateZipCode(zip)) {
 			String message = "Please enter your zip code correctly";
 			errors.add(message);
 		}
-		if(v.isNull(country)) {
+		if (v.isNull(country)) {
 			String message = "Please enter your country";
 			errors.add(message);
 		}
-		
-		if(errors.size() != 0) {
+
+		if (errors.size() != 0) {
 			model.addAttribute("Errors", errors);
 			return "PatientSignup";
-		}
-		else {
-			PatientModel obj = new PatientModel();
-			
+		} else {
+
 			obj.setAdd1(add_line_1);
 			obj.setAdd2(add_line_2);
 			obj.setAge(age);
@@ -111,36 +125,272 @@ public class PatientController {
 			obj.setState(state);
 			obj.setUsername(username);
 			obj.setZip(zip);
-			
+
 			patientDAO.create(obj);
-			
+
 			return "Patient_Registration_Success";
 		}
-		
+
 	}
-	
+
 	@PostMapping("/loginPatient")
-	public String loginPatient(Model model, @ModelAttribute("patientmodel") PatientModel patient, HttpServletRequest req) {
+	public String loginPatient(Model model, @ModelAttribute("patientmodel") PatientModel patient,
+			HttpServletRequest req) {
 		String page = null;
 		try {
-			PatientModel p = patientDAO.getPatient(patient.getUsername(), patient.getPassword()); 
-			if(p != null) {
+			PatientModel p = patientDAO.getPatient(patient.getUsername(), patient.getPassword());
+			if (p != null) {
+				obj = p;
 				model.addAttribute("PatientModel", p);
 				page = "PatientLoginSuccess";
-			}
-			else {
+			} else {
 				page = "LoginPatient";
-			} 
-		} catch(Exception e) {
+			}
+		} catch (Exception e) {
 			e.getMessage();
 		}
+
 		return page;
 	}
-	
+
 	@RequestMapping(value = "/loginPatientRedirect", method = RequestMethod.GET)
 	public String loginRedirect() {
 		return "LoginPatient";
 	}
-	
-}
 
+	@RequestMapping(value = "/bookedAppointments")
+	public ModelAndView viewAllBookedAppointments(ModelMap map) {
+		ModelAndView mv = new ModelAndView();
+
+		List<Appointments> bookedAppointments = appDAO.getAllAppointments(obj.getId());
+
+		if (bookedAppointments.size() != 0) {
+			
+			map.addAttribute("BookedApp", bookedAppointments);
+			mv.setViewName("AllAppointments");
+		} else {
+			map.addAttribute("Error", "Some error has occcured! Please Try again");
+			mv.setViewName("DisplayError");
+		}
+
+		return mv;
+	}
+
+	@RequestMapping(value = "/viewAppointment")
+	public ModelAndView viewAppointment(ModelMap map) throws Exception {
+//		For user to view all doctors
+		System.out.println("Called makeanAppointment");
+
+//		Add Start date and week date check flag
+
+		availDoctors = availDAO.getAllDoctors();
+		for (DoctorAvailModel avail : availDoctors) {
+			System.out.println("All available doctors" + avail.toString());
+		} // Testing to check if the we receive all the available doctors
+
+		ModelAndView mv = new ModelAndView();
+		map.addAttribute("AvailableDoctors", availDoctors);
+		mv.setViewName("BookAppointment");
+		return mv;
+	}
+
+	@SuppressWarnings("unused")
+	@RequestMapping(value = "/bookAppointment", method = RequestMethod.POST)
+	public ModelAndView bookAppointment(ModelMap map, @RequestParam("doc_id") String doc_id,
+			@RequestParam("Day") String day) throws Exception {
+//		For user to book an appointment
+		System.out.println("Called makeanAppointment");
+
+		Appointments appointment = new Appointments();
+
+		DoctorModel affected_doctor = null;
+
+		ModelAndView mv = new ModelAndView();
+
+//		Fetching the Doctor object that is to be used 
+		for (DoctorAvailModel iter : availDoctors) {
+			int affected_doctor_id = iter.getDoctor_id();
+			if (affected_doctor_id == Integer.parseInt(doc_id)) {
+				affected_doctor = docDAO.getDoctorById(Integer.parseInt(doc_id));
+			}
+		}
+
+		System.out.println("The doctor appointment requested: " + affected_doctor.toString());
+
+//		Fetching the doctor availability and making a entry 
+		String finalDay;
+		DoctorAvailModel affected_doctor_availability = availDAO.getDoctorAvailability(Integer.parseInt(doc_id));
+		System.out.println("Availability of the doctor: " + affected_doctor_availability.toString());
+		if (day.toLowerCase().equals("monday")) {
+			System.out.println("Entered the if else condition!!");
+			finalDay = "Monday";
+			appointment.setStart_time(affected_doctor_availability.getMonday_sd());
+			appointment.setEnd_time(affected_doctor_availability.getMonday_ed());
+			appointment.setDay(finalDay);
+			appointment.setDoctor_Id(affected_doctor.getDoctor_id());
+			appointment.setPatient_id(obj.getId());
+			appointment.setPatient_first_name(obj.getFirstName());
+			appointment.setPatient_last_name(obj.getLastName());
+
+			appDAO.create(appointment);
+
+//				Updating the availability in the database table 
+			int updateValue = (Integer.parseInt(affected_doctor_availability.getP_count()) - 1);
+			availDAO.updatePCount(affected_doctor_availability, updateValue);
+
+			if (appointment != null) {
+				map.addAttribute("Appointment", appointment);
+				mv.setViewName("AppointmentSuccess");
+			} else {
+				map.addAttribute("Message", "Error Booking an appointment!!");
+				mv.setViewName("DisplayError");
+			}
+
+		} else if (day.toLowerCase().equals("tuesday")) {
+			System.out.println("Entered the if else condition!!");
+			finalDay = "Tuesday";
+			appointment.setStart_time(affected_doctor_availability.getTuesday_ed());
+			appointment.setEnd_time(affected_doctor_availability.getTuesday_ed());
+			appointment.setDoctor_Id(affected_doctor.getDoctor_id());
+			appointment.setDay(finalDay);
+			appointment.setPatient_id(obj.getId());
+			appointment.setPatient_first_name(obj.getFirstName());
+			appointment.setPatient_last_name(obj.getLastName());
+
+			appDAO.create(appointment);
+
+//			Updating the availability in the database table 
+			int updateValue = (Integer.parseInt(affected_doctor_availability.getP_count()) - 1);
+			availDAO.updatePCount(affected_doctor_availability, updateValue);
+
+			if (appointment != null) {
+				map.addAttribute("Appointment", appointment);
+				mv.setViewName("AppointmentSuccess");
+			} else {
+				map.addAttribute("Message", "Error Booking an appointment!!");
+				mv.setViewName("DisplayError");
+			}
+
+		} else if (day.toLowerCase().equals("wednesday")) {
+			System.out.println("Entered the if else condition!!");
+			finalDay = "Wednesday";
+			appointment.setStart_time(affected_doctor_availability.getWednesday_sd());
+			appointment.setEnd_time(affected_doctor_availability.getWednesday_ed());
+			appointment.setDoctor_Id(affected_doctor.getDoctor_id());
+			appointment.setDay(finalDay);
+			appointment.setPatient_id(obj.getId());
+			appointment.setPatient_first_name(obj.getFirstName());
+			appointment.setPatient_last_name(obj.getLastName());
+
+			appDAO.create(appointment);
+
+//				Updating the availability in the database table 
+			int updateValue = (Integer.parseInt(affected_doctor_availability.getP_count()) - 1);
+			availDAO.updatePCount(affected_doctor_availability, updateValue);
+
+			if (appointment != null) {
+				map.addAttribute("Appointment", appointment);
+				mv.setViewName("AppointmentSuccess");
+			} else {
+				map.addAttribute("Message", "Error Booking an appointment!!");
+				mv.setViewName("DisplayError");
+			}
+
+		} else if (day.toLowerCase().equals("thursday")) {
+			System.out.println("Entered the if else condition!!");
+			finalDay = "Thursday";
+			appointment.setStart_time(affected_doctor_availability.getThursday_sd());
+			appointment.setEnd_time(affected_doctor_availability.getThursday_ed());
+			appointment.setDoctor_Id(affected_doctor.getDoctor_id());
+			appointment.setDay(finalDay);
+			appointment.setPatient_id(obj.getId());
+			appointment.setPatient_first_name(obj.getFirstName());
+			appointment.setPatient_last_name(obj.getLastName());
+
+			appDAO.create(appointment);
+
+//				Updating the availability in the database table 
+			int updateValue = (Integer.parseInt(affected_doctor_availability.getP_count()) - 1);
+			availDAO.updatePCount(affected_doctor_availability, updateValue);
+
+			if (appointment != null) {
+				map.addAttribute("Appointment", appointment);
+				mv.setViewName("AppointmentSuccess");
+			} else {
+				map.addAttribute("Message", "Error Booking an appointment!!");
+				mv.setViewName("DisplayError");
+			}
+
+		} else if (day.toLowerCase().equals("friday")) {
+			System.out.println("Entered the if else condition!!");
+			finalDay = "Friday";
+			appointment.setStart_time(affected_doctor_availability.getFriday_sd());
+			appointment.setEnd_time(affected_doctor_availability.getFriday_ed());
+			appointment.setDoctor_Id(affected_doctor.getDoctor_id());
+			appointment.setDay(finalDay);
+			appointment.setPatient_id(obj.getId());
+			appointment.setPatient_first_name(obj.getFirstName());
+			appointment.setPatient_last_name(obj.getLastName());
+
+			appDAO.create(appointment);
+
+//				Updating the availability in the database table 
+			int updateValue = (Integer.parseInt(affected_doctor_availability.getP_count()) - 1);
+			availDAO.updatePCount(affected_doctor_availability, updateValue);
+
+			if (appointment != null) {
+				map.addAttribute("Appointment", appointment);
+				mv.setViewName("AppointmentSuccess");
+			} else {
+				map.addAttribute("Message", "Error Booking an appointment!!");
+				mv.setViewName("DisplayError");
+			}
+
+		} else {
+			System.out.println("Entered the else condition!!");
+			String message = "Please enter a valid day";
+			mv.setViewName("DisplayError");
+			map.addAttribute("Error", message);
+		}
+
+		return mv;
+	}
+
+	@RequestMapping(value = "/deleteAppointment")
+	public ModelAndView deleteAppointment(@RequestParam("app_id") String appId, ModelMap map) throws Exception {
+//		For user to cancel their appointments 
+		System.out.println("cancel an appointment");
+		
+		Appointments appToBeDeleted = appDAO.getAppointment(Integer.parseInt(appId));
+		
+		ModelAndView mv = new ModelAndView();
+		
+		if(appToBeDeleted != null) {
+			appDAO.deleteAppointment(appToBeDeleted);
+			
+			// Update the availability table p_count attribute
+			int doc_id = appToBeDeleted.getDoctor_id();
+			
+			DoctorAvailModel docAvailToBeUpdated = availDAO.getDoctorAvailability(doc_id);
+			
+			System.out.println(docAvailToBeUpdated.toString()); // Test
+			
+			int new_p_count = Integer.parseInt(docAvailToBeUpdated.getP_count()) + 1;
+			
+			appDAO.deleteAppointment(appToBeDeleted);
+			
+			availDAO.updatePCount(docAvailToBeUpdated, new_p_count);
+			
+//			Test
+			System.out.println(availDAO.getDoctorAvailability(doc_id).toString());
+			
+			mv.setViewName("DeleteSuccess");
+			map.addAttribute("Message", "The appointment has been deleted!!");
+		} else {
+			mv.setViewName("DisplayError");
+			map.addAttribute("Error", "Error deleting your appointment!!");
+		}
+		return mv;
+	}
+
+}

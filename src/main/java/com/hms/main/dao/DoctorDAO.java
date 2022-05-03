@@ -13,6 +13,7 @@ public class DoctorDAO extends DAO {
 		
 	}
 	
+//	To add user to the DB Table 
     public void create(DoctorModel doctor) {
 
         Session session = getSession();
@@ -24,6 +25,8 @@ public class DoctorDAO extends DAO {
             session.save(doctor);
 
             commit();
+            
+            close();
 
         } catch (Exception e) {
 
@@ -39,6 +42,7 @@ public class DoctorDAO extends DAO {
 
     }
     
+//    To get doctor object for login and sign up purposes
     public DoctorModel getDoctor(String username, String password) throws Exception {
     	
     	Session session = getSession();
@@ -63,5 +67,58 @@ public class DoctorDAO extends DAO {
     	}
     	
     }
+    
+    
+//    To get doctor object with a specific doctor_ID 
+    public DoctorModel getDoctorById(int doctor_id) throws Exception {
+    	
+    	DoctorModel obj = null;
+    	
+    	Session session = getSession();
+    	
+    	try {
+    		Query q = session.createQuery("from DoctorModel where doctor_id = :DOCID1");
+    		
+    		q.setParameter("DOCID1", doctor_id);
+    		
+    		obj = (DoctorModel) q.uniqueResult();
+    		
+    		close();
+    		
+    	} catch(Exception e) {
+    		
+    		throw new Exception(e.getMessage(), e);
+    		
+    	}
+    	
+    	return obj;
+    	
+    }
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

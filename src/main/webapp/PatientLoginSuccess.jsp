@@ -7,6 +7,11 @@
 <title>Patient Login Success</title>
 </head>
 <body>
-	Patient logged in successfully!
+	<p>
+		Logged in successfully! <br></br>
+		Welcome ${PatientModel.firstName}, <br></br>
+	</p> <br></br>
+	<a href = "/viewAppointment"> MAKE AN APPOINTMENT </a> | 
+	<a href = "bookedAppointments"> VIEW YOUR APPOINTMENT </a>
 </body>
 </html>

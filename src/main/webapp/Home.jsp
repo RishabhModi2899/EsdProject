@@ -13,19 +13,19 @@
 <body>
 	<div style="display: flex; flex-direction: column; justify-content: center; align-items: center">
 		<h1>
-			HMS
+			Hospital Management System
 		</h1>
 		<br></br>
 		<form action="/redirectUser" method="post">
 			<p>What are you?</p>
-			<input type="radio" id="patient" name="association" value="patient">
+			<input type="radio" id="patient" name="association" value="patient" required>
 			<label for="patient">PATIENT</label>
-			<input type="radio" id="doctor" name="association" value="doctor">
+			<input type="radio" id="doctor" name="association" value="doctor" required>
 			<label for="doctor">DOCTOR</label><br><br>
 			<p>What do you want to do?</p>
-			<input type="radio" id="patient" name="action" value="login">
+			<input type="radio" id="patient" name="action" value="login" required>
 			<label for="patient">LOGIN</label>
-			<input type="radio" id="doctor" name="action" value="signup">
+			<input type="radio" id="doctor" name="action" value="signup" required>
 			<label for="doctor">SIGNUP</label><br><br>
 			<input type="submit" value="SUBMIT">
 		</form>

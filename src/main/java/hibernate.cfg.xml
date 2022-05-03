@@ -15,6 +15,7 @@
 <mapping class="com.hms.main.components.DoctorModel" />
 <mapping class="com.hms.main.components.PatientModel" />
 <mapping class="com.hms.main.components.DoctorAvailModel" />
+<mapping class="com.hms.main.components.Appointments" />
 
 </session-factory>
 </hibernate-configuration>

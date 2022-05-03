@@ -18,12 +18,12 @@
 		<br></br>
 		<div class="containerDoc">
 			<label>USERNAME</label>
-			<input name="username" type="email" />
+			<input name="username" type="email" required/>
 		</div>
 		<br></br>
 		<div class="containerDoc">
 			<label>PASSWORD</label>
-			<input name="password" type="password" />
+			<input name="password" type="password" required/>
 		</div>
 		<br></br>
 		<div class="containerDoc">
