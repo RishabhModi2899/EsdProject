@@ -16,10 +16,10 @@
 			<table border = 1>
 		<c:forEach items="${AvailableDoctors}" var="vars">
 	    <tr>
-	    	<td>Week Start Date</td> 
-	    	<td>"${vars.week_start_date}" </td>
-	    	<td>Doctor Id</td>
-	    	<td>"${vars.doctor_id}"</td>
+	    	<td style="color:blue">Week Start Date</td> 
+	    	<td style="color:blue">"${vars.week_start_date}" </td>
+	    	<td style="color:blue">Doctor Id</td>
+	    	<td style="color:blue">"${vars.doctor_id}"</td>
 	    </tr>
 	    <tr>
 	        <td>Monday Start Time: </td>

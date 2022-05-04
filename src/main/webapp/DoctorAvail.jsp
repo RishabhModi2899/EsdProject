@@ -17,10 +17,10 @@
 	<br></br>
 	<form action="/onSubmitAvail" method="post">
 		<label>Week Start Date</label>
-		<input type="date" name="week_start_date" />
+		<input style="color:blue" type="week" name="week_start_date" />
 	 	
 	 	<label>DOCTOR ID</label>
-		<input type="number" name="docid" /> <br></br>
+		<input style="color:blue" type="number" name="docid" /> <br></br>
 	 	
 		<label>Monday:</label> <br></br>
 		<input type="time" name="m_start_time" min="09:00" max="18:00" />

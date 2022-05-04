@@ -1,5 +1,6 @@
 package com.hms.main.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -36,7 +37,7 @@ public class DoctorAvailDAO extends DAO {
 
         } finally {
 
-            session.close();
+            close();
 
         }
 
@@ -47,22 +48,30 @@ public class DoctorAvailDAO extends DAO {
     	
     	Session session = getSession();
     	
+    	DoctorAvailModel obj;
+    	
     	try {
+    		begin();
+    		
     		Query q = session.createQuery("from DoctorAvailModel where doctor_id = :DOCID1"); 
     		
     		q.setParameter("DOCID1", doc_id);
     		
-    		DoctorAvailModel obj = (DoctorAvailModel) q.uniqueResult();
+    		obj = (DoctorAvailModel) q.uniqueResult();
     		
-    		close();
-    		
-    		return obj;
     	}
     	catch(Exception e) {
+    		
     		System.out.print(e.getMessage());
     		
     		throw new Exception(e.getMessage(), e);
+    	} finally {
+    		
+    		close();
+    		
     	}
+    	
+		return obj;
     	
     }
     
@@ -75,16 +84,20 @@ public class DoctorAvailDAO extends DAO {
     	
     	try {
     		
+    		begin();
+    		
     		Query q = session.createQuery("from DoctorAvailModel where p_count > 0");
     		
     		available_doctors = q.list();
-    		
-    		close();
     		
     	} catch(Exception e) {
     		
     		e.printStackTrace();
     	
+    	} finally {
+    		
+    		close();
+    		
     	}
     	
 //    	Testing 
@@ -101,26 +114,27 @@ public class DoctorAvailDAO extends DAO {
     	
     	Session session = getSession();
     	
+    	doc_avail.setP_count(String.valueOf(updatedValueForPCount));
+    	
     	try {
     		
     		begin();
-    		
-    		doc_avail.setP_count(String.valueOf(updatedValueForPCount));
     		
     		session.update(doc_avail);
     		
     		commit();
     		
-    		close();
-    		
     	} catch(Exception e) {
     		
     		e.printStackTrace();
     		
+    	} finally {
+    		
+    		close();
+    		
     	}
     	
     }
-	
 	
 }
 

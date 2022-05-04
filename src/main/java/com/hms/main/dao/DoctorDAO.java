@@ -25,8 +25,6 @@ public class DoctorDAO extends DAO {
             session.save(doctor);
 
             commit();
-            
-            close();
 
         } catch (Exception e) {
 
@@ -36,7 +34,7 @@ public class DoctorDAO extends DAO {
 
         } finally {
 
-            session.close();
+            close();
 
         }
 
@@ -47,24 +45,32 @@ public class DoctorDAO extends DAO {
     	
     	Session session = getSession();
     	
+    	DoctorModel obj;
+    	
     	try {
+    		
+    		begin();
+    		
     		Query q = session.createQuery("from DoctorModel where username = :USER1 AND password = :PASS1"); 
     		
     		q.setParameter("USER1", username);
     		
     		q.setParameter("PASS1", password);
     		
-    		DoctorModel obj = (DoctorModel) q.uniqueResult();
-    		
-    		close();
-    		
-    		return obj;
+    		obj = (DoctorModel) q.uniqueResult();
     	}
     	catch(Exception e) {
+    		
     		System.out.print(e.getMessage());
     		
     		throw new Exception(e.getMessage(), e);
+    	} finally {
+    		
+    		close();
+    		
     	}
+    	
+		return obj;
     	
     }
     
@@ -72,22 +78,28 @@ public class DoctorDAO extends DAO {
 //    To get doctor object with a specific doctor_ID 
     public DoctorModel getDoctorById(int doctor_id) throws Exception {
     	
-    	DoctorModel obj = null;
+    	DoctorModel obj;
     	
     	Session session = getSession();
     	
     	try {
+    		
+    		begin();
+    		
     		Query q = session.createQuery("from DoctorModel where doctor_id = :DOCID1");
     		
     		q.setParameter("DOCID1", doctor_id);
     		
     		obj = (DoctorModel) q.uniqueResult();
     		
-    		close();
     		
     	} catch(Exception e) {
     		
     		throw new Exception(e.getMessage(), e);
+    		
+    	} finally {
+    		
+    		close();
     		
     	}
     	
