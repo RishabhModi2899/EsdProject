@@ -27,8 +27,6 @@ public class AppointmentsDAO extends DAO {
             session.save(app);
 
             commit();
-            
-            close();
 
         } catch (Exception e) {
 
@@ -38,7 +36,7 @@ public class AppointmentsDAO extends DAO {
 
         } finally {
 
-            session.close();
+            close();
 
         }
 		
@@ -52,17 +50,21 @@ public class AppointmentsDAO extends DAO {
 		Appointments app = null;
 		
 		try {
+			begin();
+			
 			Query q = session.createQuery("from Appointments where appoint_id = :ID");
 			
 			q.setParameter("ID", id);
 			
 			app = (Appointments) q.uniqueResult();
 			
-			close();
-			
 		} catch(Exception e) {
 			
 			e.printStackTrace();
+			
+		} finally {
+			
+			close();
 			
 		}
 		
@@ -79,17 +81,21 @@ public class AppointmentsDAO extends DAO {
 		
 		try{
 			
+			begin();
+			
 			Query q = session.createQuery("from Appointments where patient_id = :PATID");
 			
 			q.setParameter("PATID", pat_id);
 			
 			appointments = q.list();
 			
-			close();
-			
 		} catch(Exception e) {
 			
 			e.printStackTrace();
+			
+		} finally {
+			
+			close();
 			
 		}
 		
@@ -111,17 +117,22 @@ public class AppointmentsDAO extends DAO {
 		
 		try {
 			
+			begin();
+			
 			session.delete(app);
 			
 			commit();
-			
-			close();
 			
 		} catch(Exception e) {
 			
 			e.printStackTrace();
 		
+		} finally {
+			
+			close();
+			
 		}
+		
 	}
 	
 }	

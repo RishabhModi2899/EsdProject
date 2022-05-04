@@ -14,13 +14,13 @@
 		Your Appointments
 	</label>
 	<br>
-	<div>
-		<div style="display:flex">
+	<div style="display:flex">
+		<div>
 			<table border=1>
 				<c:forEach items="${BookedApp}" var="vars">
 					<tr>
-				    	<td> Appointment ID: </td> 
-				    	<td> "${vars.appoint_id}" </td> 
+				    	<td style="color:blue"> Appointment ID: </td> 
+				    	<td style="color:blue"> "${vars.appoint_id}" </td> 
 				    </tr>
 				    <tr>
 				    	<td> Patient ID: </td> 
@@ -35,8 +35,8 @@
 				        <td> "${vars.patient_last_name}" </td>
 				    </tr>
 				    <tr>
-				        <td> Doctor ID: </td>
-				        <td> "${vars.doctor_id}" </td> 
+				        <td style="color:green"> Doctor ID: </td>
+				        <td style="color:green"> "${vars.doctor_id}" </td> 
 				    </tr>
 				    <tr>
 				        <td> Day: </td> 
@@ -54,7 +54,7 @@
 				</c:forEach>
 			</table>
 		</div>
-		<div>
+		<div style="margin:5%">
 			<h3>Delete Appointment</h3>
 			<form action="/deleteAppointment" method="post">
 				<label>
@@ -65,9 +65,8 @@
 				<input type="submit" value="DELETE"/>
 			</form>
 		</div>
+		<br>
+		<a href="/loginPatientRedirect"> BACK TO LOGIN </a>
 	</div>
-	
-	<br>
-	<a href="/loginPatientRedirect"> BACK TO LOGIN </a>
 </body>
 </html>

@@ -1,7 +1,5 @@
 package com.hms.main.dao;
 
-
-
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Component;
@@ -17,7 +15,9 @@ public class PatientDAO extends DAO {
 	}
 	
 	public void create(PatientModel patient) {
+		
 		Session session = getSession();
+		
 		try {
 			
 			begin();
@@ -34,7 +34,7 @@ public class PatientDAO extends DAO {
 			
 		} finally {
 			
-			session.close();
+			close();
 			
 		}
 		
@@ -44,7 +44,11 @@ public class PatientDAO extends DAO {
 	    	
 	    	Session session = getSession();
 	    	
+	    	PatientModel obj;
+	    	
 	    	try {
+	    		
+	    		begin();
 	    		
 	    		Query q = session.createQuery("from PatientModel where username = :USER1 AND password = :PASS1"); 
 	    		
@@ -52,18 +56,21 @@ public class PatientDAO extends DAO {
 	    		
 	    		q.setParameter("PASS1", password);
 	    		
-	    		PatientModel obj = (PatientModel) q.uniqueResult();
+	    		obj = (PatientModel) q.uniqueResult();
 	    		
-	    		close();
-	    		
-	    		return obj;
 	    	}
 	    	catch(Exception e) {
 	    		System.out.print(e.getMessage());
 	    		
 	    		throw new Exception(e.getMessage(), e);
+	    		
+	    	} finally {
+	    		
+	    		close();
+	    		
 	    	}
-	    	
+
+    		return obj;
 	    }
 	
 }

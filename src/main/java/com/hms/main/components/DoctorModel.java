@@ -19,13 +19,13 @@ public class DoctorModel {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int doctor_id;
 
-	@Column(name = "first_name")
+	@Column(name = "doc_first_name")
 	private String firstName;
 	
-	@Column(name = "doc_first_name")
+	@Column(name = "doc_last_name")
 	private String lastName;
 	
-	@Column(name = "doc_last_name")
+	@Column(name = "age")
 	private String age;
 	
 	@Column(name = "department")

@@ -32,9 +32,9 @@ public class DAO {
 
 	protected void begin() {
 		
-		countThread++;
+//		countThread++;
 		getSession().beginTransaction();
-		System.out.println(countThread);
+//		System.out.println(countThread);
 	}
 
 	protected void commit() {

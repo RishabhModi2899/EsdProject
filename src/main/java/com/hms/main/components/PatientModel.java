@@ -142,8 +142,6 @@ public class PatientModel {
 		return add2;
 	}
 	
-	
-	
 	public void setAdd2(String add2) {
 		this.add2 = add2;
 	}
