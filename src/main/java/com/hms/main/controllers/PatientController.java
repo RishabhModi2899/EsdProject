@@ -1,11 +1,6 @@
 package com.hms.main.controllers;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,8 +27,6 @@ import com.hms.main.dao.DoctorAvailDAO;
 import com.hms.main.dao.DoctorDAO;
 import com.hms.main.dao.PatientDAO;
 
-import net.bytebuddy.asm.Advice.Exit;
-
 @Controller
 public class PatientController {
 
@@ -50,7 +43,7 @@ public class PatientController {
 	private DoctorDAO docDAO;
 
 	List<DoctorAvailModel> availDoctors;
-	List<DoctorAvailModel> weekAppropriateDoctors;
+//	List<DoctorAvailModel> weekAppropriateDoctors = new ArrayList<>();
 
 	@Autowired
 	PatientModel obj;
@@ -191,21 +184,30 @@ public class PatientController {
 		System.out.println("Called makeanAppointment");
 		ModelAndView mv = new ModelAndView();
 
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		Date date = new Date();
-		String sysdate = formatter.format(date);
+//		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//		Date date = new Date();
+//		String sysdate = formatter.format(date);
+//		System.out.println("Date" + sysdate);
 
 		availDoctors = availDAO.getAllDoctors();
+//		System.out.println("Avail doctors returned: " + availDoctors.size());
 
 		for (DoctorAvailModel avail : availDoctors) {
-			String chk = avail.getWeek_start_date();
-			if (formatter.parse(chk).after(formatter.parse(sysdate))) {
-				weekAppropriateDoctors.add(avail);
-			}
+//			String chk = avail.getWeek_start_date();
+//			System.out.println("date 2 " + chk);
+//			System.out.println("Condition result 1: " + formatter.parse(chk).after(formatter.parse(sysdate)) + "\n");
+//			System.out.println("Condition result 2: " + formatter.parse(sysdate).after(formatter.parse(chk)) + "\n");
+//			int cmp = sysdate.compareTo(chk);
+//			System.out.println("Check Result: " + cmp);
+			availDoctors = availDAO.getAllDoctors();
 		}
+		
+		for(DoctorAvailModel doc : availDoctors) {
+			System.out.println(doc.toString());
+		} //test
 
-		if (weekAppropriateDoctors.size() != 0) {
-			map.addAttribute("AvailableDoctors", weekAppropriateDoctors);
+		if (availDoctors.size() != 0 || availDoctors != null) {
+			map.addAttribute("AvailableDoctors", availDoctors);
 			mv.setViewName("BookAppointment");
 		} else {
 			mv.setViewName("DisplayError");
@@ -227,9 +229,13 @@ public class PatientController {
 		DoctorModel affected_doctor = null;
 
 		ModelAndView mv = new ModelAndView();
+		
+//		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//		Date date = new Date();
+//		String sysdate = formatter.format(date);
 
 //		Fetching the Doctor object that is to be used 
-		for (DoctorAvailModel iter : weekAppropriateDoctors) {
+		for (DoctorAvailModel iter : availDoctors) {
 			int affected_doctor_id = iter.getDoctor_id();
 			if (affected_doctor_id == Integer.parseInt(doc_id)) {
 				affected_doctor = docDAO.getDoctorById(Integer.parseInt(doc_id));
@@ -243,13 +249,13 @@ public class PatientController {
 		DoctorAvailModel affected_doctor_availability = availDAO.getDoctorAvailability(Integer.parseInt(doc_id));
 		System.out.println("Availability of the doctor: " + affected_doctor_availability.toString());
 		if (day.toLowerCase().equals("monday")) {
-			System.out.println("Entered the if else condition!!");
 			finalDay = "Monday";
-			if (affected_doctor_availability.getMonday_sd() == null
-					|| affected_doctor_availability.getMonday_sd() != "") {
+			System.out.println("Monday Start date : " + affected_doctor_availability.getMonday_sd());
+			
+				System.out.println("Entered the if");
 				map.addAttribute("Error", "The doctor is not available on this day.");
 				mv.setViewName("DisplayError");
-			} else {
+			
 				appointment.setStart_time(affected_doctor_availability.getMonday_sd());
 				appointment.setEnd_time(affected_doctor_availability.getMonday_ed());
 				appointment.setDay(finalDay);
@@ -260,7 +266,7 @@ public class PatientController {
 
 				appDAO.create(appointment);
 
-//						Updating the availability in the database table 
+//				Updating the availability in the database table 
 				int updateValue = (Integer.parseInt(affected_doctor_availability.getP_count()) - 1);
 				System.out.println(affected_doctor_availability.getP_count());
 				availDAO.updatePCount(affected_doctor_availability, updateValue);
@@ -273,16 +279,16 @@ public class PatientController {
 					mv.setViewName("DisplayError");
 				}
 
-			}
+			
 
 		} else if (day.toLowerCase().equals("tuesday")) {
-			System.out.println("Entered the if else condition!!");
 			finalDay = "Tuesday";
-			if (affected_doctor_availability.getTuesday_sd() != null
-					|| affected_doctor_availability.getTuesday_sd() != "") {
+			System.out.println("Entered the if");
+			System.out.println("Monday Start date : " + affected_doctor_availability.getTuesday_sd());
+		
 				map.addAttribute("Error", "The doctor is not available on this day.");
 				mv.setViewName("DisplayError");
-			} else {
+		
 				appointment.setStart_time(affected_doctor_availability.getTuesday_ed());
 				appointment.setEnd_time(affected_doctor_availability.getTuesday_ed());
 				appointment.setDoctor_Id(affected_doctor.getDoctor_id());
@@ -305,16 +311,14 @@ public class PatientController {
 					mv.setViewName("DisplayError");
 				}
 
-			}
+			
 		} else if (day.toLowerCase().equals("wednesday")) {
-			System.out.println("Entered the if else condition!!");
+			System.out.println("Entered the if");
 			finalDay = "Wednesday";
-			if (affected_doctor_availability.getWednesday_sd() != null
-					|| affected_doctor_availability.getWednesday_sd() != "") {
+			System.out.println("Monday Start date : " + affected_doctor_availability.getWednesday_sd());
 				map.addAttribute("Error", "The doctor is not available on this day.");
 				mv.setViewName("DisplayError");
-			} else {
-				appointment.setStart_time(affected_doctor_availability.getWednesday_sd());
+			 	appointment.setStart_time(affected_doctor_availability.getWednesday_sd());
 				appointment.setEnd_time(affected_doctor_availability.getWednesday_ed());
 				appointment.setDoctor_Id(affected_doctor.getDoctor_id());
 				appointment.setDay(finalDay);
@@ -335,16 +339,15 @@ public class PatientController {
 					map.addAttribute("Message", "Error Booking an appointment!!");
 					mv.setViewName("DisplayError");
 				}
-			}
+			
 
 		} else if (day.toLowerCase().equals("thursday")) {
-			System.out.println("Entered the if else condition!!");
+			System.out.println("Entered the if");
 			finalDay = "Thursday";
-			if (affected_doctor_availability.getThursday_sd() != null
-					|| affected_doctor_availability.getThursday_sd() != "") {
+			System.out.println("Monday Start date : " + affected_doctor_availability.getThursday_sd());
 				map.addAttribute("Error", "The doctor is not available on this day.");
 				mv.setViewName("DisplayError");
-			} else {
+			
 				appointment.setStart_time(affected_doctor_availability.getThursday_sd());
 				appointment.setEnd_time(affected_doctor_availability.getThursday_ed());
 				appointment.setDoctor_Id(affected_doctor.getDoctor_id());
@@ -366,16 +369,15 @@ public class PatientController {
 					map.addAttribute("Message", "Error Booking an appointment!!");
 					mv.setViewName("DisplayError");
 				}
-			}
+			
 
 		} else if (day.toLowerCase().equals("friday")) {
-			System.out.println("Entered the if else condition!!");
+			System.out.println("Entered the if");
+			System.out.println("Monday Start date : " + affected_doctor_availability.getFriday_sd());
 			finalDay = "Friday";
-			if (affected_doctor_availability.getFriday_sd() != null
-					|| affected_doctor_availability.getFriday_sd() != "") {
-				map.addAttribute("Error", "The doctor is not available on this day.");
+			map.addAttribute("Error", "The doctor is not available on this day.");
 				mv.setViewName("DisplayError");
-			} else {
+			
 				appointment.setStart_time(affected_doctor_availability.getFriday_sd());
 				appointment.setEnd_time(affected_doctor_availability.getFriday_ed());
 				appointment.setDoctor_Id(affected_doctor.getDoctor_id());
@@ -397,7 +399,7 @@ public class PatientController {
 					map.addAttribute("Message", "Error Booking an appointment!!");
 					mv.setViewName("DisplayError");
 				}
-			}
+			
 
 		} else {
 			System.out.println("Entered the else condition!!");
