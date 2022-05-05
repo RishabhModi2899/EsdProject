@@ -17,7 +17,7 @@
 	<br></br>
 	<form action="/onSubmitAvail" method="post">
 		<label>Week Start Date</label>
-		<input style="color:blue" type="week" name="week_start_date" />
+		<input style="color:blue" type="date" name="week_start_date" />
 	 	
 	 	<label>DOCTOR ID</label>
 		<input style="color:blue" type="number" name="docid" /> <br></br>
